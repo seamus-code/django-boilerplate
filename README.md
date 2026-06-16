@@ -1,6 +1,6 @@
 # Django Boilerplate
 
-The original SaaS Boilerplate for Django, trusted by thousands
+The original SaaS Boilerplate for Django, trusted by thousands.
 
 ## Quickstart
 
