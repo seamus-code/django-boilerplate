@@ -55,7 +55,6 @@ The pro version is more suitable for business-grade SaaS and AI applications.
 | **Teams & multi-tenancy** | — | ✅ |
 | **Built-in AI chat/agent app** | — | ✅ |
 | **One-click production deployment** (Render, Fly, Heroku, GCP, AWS…) | — | ✅ |
-| **Social & 2FA login, API keys, user impersonation** | — | ✅ |n
 | **Social & 2FA login, API keys, user impersonation** | — | ✅ |
 | **Dedicated support & priority fixes** | Community | ✅ |
 
