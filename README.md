@@ -168,3 +168,7 @@ On Linux-based systems you can watch for changes using the following:
 ```bash
 find . -name '*.py' | entr uv run manage.py test apps.web.tests.test_basic_views
 ```
+
+---
+
+*Built with [SaaS Pegasus](https://www.saaspegasus.com/), the Django SaaS boilerplate.*

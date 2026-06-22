@@ -46,6 +46,8 @@ test: ## Run Django tests
 	@uv run manage.py test ${ARGS}
 
 init: setup-env start-bg migrations migrate npm-install-all  ## Quickly get up and running (start containers and bootstrap DB)
+	@echo ""
+	@echo "✅ Project setup complete! Run 'make dev' to start the app."
 
 uv: ## Run a uv command
 	@uv $(filter-out $@,$(MAKECMDGOALS))
