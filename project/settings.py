@@ -73,6 +73,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -227,7 +228,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / "static_root"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
@@ -242,7 +243,8 @@ STORAGES = {
         # swap these to use manifest storage to bust cache when files change
         # note: this may break image references in sass/css files which is why it is not enabled by default
         # "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        # "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
