@@ -914,7 +914,7 @@ dependencies = [
     { name = "django-waffle" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
-    { name = "psycopg" },
+    { name = "psycopg", extra = ["binary"] },
     { name = "redis" },
     { name = "whitenoise" },
 ]
@@ -952,7 +952,7 @@ requires-dist = [
     { name = "django-waffle" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
-    { name = "psycopg" },
+    { name = "psycopg", extras = ["binary"] },
     { name = "redis" },
     { name = "whitenoise", specifier = ">=6.12.0" },
 ]

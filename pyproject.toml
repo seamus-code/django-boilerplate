@@ -75,7 +75,7 @@ dependencies = [
     "django-waffle",
     "djangorestframework",
     "drf-spectacular",
-    "psycopg",
+    "psycopg[binary]",
     "redis",
     "whitenoise>=6.12.0",
 ]
