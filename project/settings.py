@@ -8,7 +8,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/stable/ref/settings/
 """
 
-import os
 from pathlib import Path
 from typing import Any
 
@@ -18,8 +17,10 @@ from django.utils.translation import gettext_lazy
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+ENV_FILE = BASE_DIR / ".env"
+
 env = environ.Env()
-env.read_env(os.path.join(BASE_DIR, ".env"))
+env.read_env(ENV_FILE)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/stable/howto/deployment/checklist/
@@ -28,7 +29,9 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-tqSH9gWpm3BO3HE8FBZMBbvW4pzcZVi1KFmzi1hk")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = env.bool("DEBUG", default=True)
+# Default to DEBUG only when a local .env file is present so production deployments
+# that configure settings entirely through environment variables stay safe by default.
+DEBUG = env.bool("DEBUG", default=ENV_FILE.exists())
 
 # Note: It is not recommended to set ALLOWED_HOSTS to "*" in production
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
