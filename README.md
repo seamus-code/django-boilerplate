@@ -229,6 +229,40 @@ On Linux-based systems you can watch for changes using the following:
 find . -name '*.py' | entr uv run manage.py test apps.web.tests.test_basic_views
 ```
 
+## Deploying to Vercel (without Docker databases)
+
+This project now includes a `vercel.json` and `requirements.txt` so Vercel can install Python
+dependencies in its own runtime environment and run Django correctly.
+
+### 1) Required Vercel environment variables
+
+Set these in your Vercel project settings:
+
+- `DJANGO_SETTINGS_MODULE=project.settings_production`
+- `SECRET_KEY=<your production secret>`
+- `DATABASE_URL=<your managed Postgres connection URL>`
+- `ALLOWED_HOSTS=<your vercel domain(s), comma-separated>`
+- `CSRF_TRUSTED_ORIGINS=https://<your-domain>,https://<your-preview-domain>`
+
+If you use Celery/caching in production, also set:
+
+- `REDIS_URL=<your managed Redis URL>`
+
+### 2) Build/install behavior
+
+`vercel.json` is configured to:
+
+- install Python dependencies with `pip install -r requirements.txt`
+- build frontend assets with `npm ci && npm run build`
+- serve Django through `project/wsgi.py`
+
+### 3) Notes on previous `collectstatic` / `psycopg` failure
+
+Using `uv sync` in Vercel settings installs packages into a separate `.venv`, while Vercel runs
+`collectstatic` with its own Python environment. That mismatch can cause missing imports (like
+`psycopg`) during deploy. Using `requirements.txt` fixes that by installing dependencies in the
+same environment Vercel uses for build/runtime.
+
 ---
 
 ## Documentation
