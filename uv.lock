@@ -914,8 +914,15 @@ dependencies = [
     { name = "django-waffle" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
-    { name = "psycopg" },
     { name = "redis" },
+]
+
+[package.optional-dependencies]
+pg-binary = [
+    { name = "psycopg", extra = ["binary"] },
+]
+pg-standard = [
+    { name = "psycopg" },
 ]
 
 [package.dev-dependencies]
@@ -951,9 +958,11 @@ requires-dist = [
     { name = "django-waffle" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
-    { name = "psycopg" },
+    { name = "psycopg", marker = "extra == 'pg-standard'" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'pg-binary'" },
     { name = "redis" },
 ]
+provides-extras = ["pg-standard", "pg-binary"]
 
 [package.metadata.requires-dev]
 dev = [

@@ -66,15 +66,16 @@ The pro version is more suitable for business-grade SaaS and AI applications.
 
 ### Prerequisites
 
-To run the app in the recommended configuration, you will need the following installed:
-- [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install)
-- [uv](https://docs.astral.sh/uv/getting-started/installation/) (for Python)
-- [node and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (for JavaScript)
+Choose the setup path that matches how you want to run the project:
+
+- Docker-based local services: [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install)
+- Python dependencies: [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- Front-end build tooling: [node and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
 On Windows, you will also need to install `make`, which you can do by
 [following these instructions](https://stackoverflow.com/a/57042516/8207).
 
-### Initial setup
+### Local development with Docker
 
 Run the following command to initialize your application:
 
@@ -84,10 +85,10 @@ make init
 
 This will:
 
-- Build and run your Postgres database
-- Build and run your Redis database
+- Start Postgres in Docker
+- Start Redis in Docker
 - Run your database migrations
-- Install front end dependencies
+- Install front-end dependencies
 
 Then you can start the app:
 
@@ -99,6 +100,9 @@ This will run your Django server and build and run your front end (JavaScript an
 
 Your app should now be running! You can open it at [localhost:8000](http://localhost:8000/).
 
+This Docker flow is intended for local development and for self-managed environments where you want
+to run Postgres and Redis yourself. It is not required for Vercel deployment.
+
 If you're just getting started, [try these steps next](https://docs.saaspegasus.com/getting-started/#post-installation-steps).
 
 ## Using the Makefile
@@ -106,7 +110,7 @@ If you're just getting started, [try these steps next](https://docs.saaspegasus.
 You can run `make` to see other helper functions, and you can view the source
 of the file in case you need to run any specific commands.
 
-## Installation - Native
+## Native local setup
 
 You can also install/run the app directly on your OS using the instructions below.
 
@@ -180,6 +184,76 @@ celery -A project worker -l INFO -B --pool=solo
 ```
 
 Note: Using the `solo` pool is recommended for development but not for production.
+
+## Deployment
+
+### Self-managed deployment with Docker services
+
+If you are deploying to your own VM or container platform, you can keep using Docker for the backing
+services defined in `docker-compose.yml`:
+
+- Postgres
+- Redis
+
+In that setup, point Django at those services with environment variables such as:
+
+```bash
+DATABASE_URL=postgresql://postgres:postgres@db:5432/project
+REDIS_URL=redis://redis:6379/0
+```
+
+You will still need to run the Django app itself with your preferred process manager or platform.
+This repository's Docker Compose file only provisions Postgres and Redis; the web app and Celery
+processes run separately.
+
+For production, also make sure you set at least:
+
+```bash
+DEBUG=False
+SECRET_KEY=<your-production-secret>
+ALLOWED_HOSTS=<your-domain>
+```
+
+If you run background jobs in production, start Celery separately and point it at the same Redis
+instance via `REDIS_URL`.
+
+### Deploying to Vercel
+
+This repository includes a `vercel.json` configuration for deploying the Django backend and Vite
+front end to Vercel.
+
+For Vercel, you should use managed infrastructure instead of Docker:
+
+- A managed Postgres database exposed via `DATABASE_URL`
+- A managed Redis instance exposed via `REDIS_URL` or `REDIS_TLS_URL`
+
+No Docker services are required on Vercel.
+
+At a minimum, configure these environment variables in your Vercel project:
+
+```bash
+DEBUG=False
+SECRET_KEY=<your-production-secret>
+ALLOWED_HOSTS=<your-vercel-domain>
+DATABASE_URL=<managed-postgres-connection-string>
+REDIS_URL=<managed-redis-connection-string>
+```
+
+Use `REDIS_TLS_URL` instead of `REDIS_URL` if your Redis provider requires TLS-only connections.
+
+The current Vercel setup installs Python dependencies with the `pg-binary` extra, which is the
+serverless-friendly Postgres driver configuration for this project.
+
+After configuring Vercel:
+
+1. Import the repository into Vercel.
+2. Add the production environment variables.
+3. Deploy.
+4. Run Django migrations against the same production database.
+
+Vercel can serve the Django app, but it does not provide a long-running worker process for Celery.
+If your production environment needs background jobs or scheduled tasks, run Celery and celery beat
+on a separate worker platform and point them at the same database and Redis instance.
 
 ## Installing Git commit hooks
 

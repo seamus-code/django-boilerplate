@@ -75,8 +75,18 @@ dependencies = [
     "django-waffle",
     "djangorestframework",
     "drf-spectacular",
-    "psycopg",
     "redis",
+]
+
+[project.optional-dependencies]
+# For servers/Docker where you have a C compiler or pre-installed libpq
+pg-standard = [
+    "psycopg" 
+]
+
+# For serverless (Vercel/Lambda) or quick local setup where you want a pre-built wheel
+pg-binary = [
+    "psycopg[binary]"
 ]
 
 [dependency-groups]
